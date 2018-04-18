@@ -1,0 +1,5 @@
+server:
+#配置服务器启动端口
+  port: 8080
+#配置访问的上下文路径，就是localhost:8083后面需要的上下文路径
+  context-path: /
