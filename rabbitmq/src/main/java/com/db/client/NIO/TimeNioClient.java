@@ -38,22 +38,22 @@ public class TimeNioClient implements Runnable {
             channel.connect(new InetSocketAddress("localhost", 9999));
             selector = Selector.open();
             channel.register(selector, SelectionKey.OP_CONNECT);
-            boolean isOver = false;
 
-//            while (!isOver) {
+            while (true) {
                 selector.select();
                 Iterator ite = selector.selectedKeys().iterator();
                 while (ite.hasNext()) {
                     SelectionKey key = (SelectionKey) ite.next();
                     ite.remove();
-
+                    //此键的通道是否已完成其套接字连接操作
                     if (key.isConnectable()) {
-                        if (channel.isConnectionPending()) {
-                            if (channel.finishConnect()) {
-                                //只有当连接成功后才能注册OP_READ事件
-                                key.interestOps(SelectionKey.OP_READ);
-
-                                channel.write(CharsetHelper.encode(CharBuffer.wrap("hello nio server")));
+                        SocketChannel test = (SocketChannel) key.channel();
+                        //SocketChannel正在尝试连接
+                        if (test.isConnectionPending()) {
+                            if (test.finishConnect()) {
+                                test.configureBlocking(false);
+                                test.write(CharsetHelper.encode(CharBuffer.wrap("hello nio server")));
+                                test.register(selector,SelectionKey.OP_READ);
                                 sleep();
                             } else {
                                 key.cancel();
@@ -70,13 +70,11 @@ public class TimeNioClient implements Runnable {
                         String word = getWord();
                         if (word != null) {
                             channel.write(CharsetHelper.encode(CharBuffer.wrap(word)));
-                        } else {
-                            isOver = true;
                         }
                         sleep();
                     }
                 }
-//            }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
