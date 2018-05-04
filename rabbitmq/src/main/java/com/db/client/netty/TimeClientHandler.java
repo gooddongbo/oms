@@ -35,8 +35,8 @@ public class TimeClientHandler extends ChannelHandlerAdapter {
     }
 
     /**
-     * 发生异常时，执行
-     * */
+     * 当发送异常时，打印异常日志，释放客户端资源
+     */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
         System.out.println(cause.getMessage());
