@@ -6,7 +6,10 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.UnsupportedEncodingException;
-
+/**
+ * ChannelInboundHandler对从客户端发往服务器的报文进行处理
+ * ChannelOutboundHandler对从服务器发往客户端的报文进行处理
+ * */
 public class TimeClientHandler extends ChannelHandlerAdapter {
     private final ByteBuf firstMessage;
 
@@ -18,6 +21,7 @@ public class TimeClientHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx){
+        System.out.println("与服务器连接成功");
         //将消息发送给服务端
         ctx.writeAndFlush(firstMessage);
     }

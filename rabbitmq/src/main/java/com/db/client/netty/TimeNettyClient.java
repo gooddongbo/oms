@@ -14,23 +14,11 @@ public class TimeNettyClient {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group).channel(NioSocketChannel.class)
                 .option(ChannelOption.TCP_NODELAY,true)
-                .handler(new ChildChannelHandler());
+                .handler(new ChannelHandlerFilter());
         try {
             //发起异步连接操作
             ChannelFuture future = bootstrap.connect(host,port).sync();
-//            future.addListener(new ChannelFutureListener() {
-//
-//                @Override
-//                public void operationComplete(ChannelFuture arg0) throws Exception {
-//                    // TODO Auto-generated method stub
-//                    if(arg0.isSuccess()){
-//                        System.out.println("client successed");
-//                    }else{
-//                        System.out.println("server attemp failed");
-//                        arg0.cause().printStackTrace();
-//                    }
-//                }
-//            });
+            future.addListener(new TimeChannelFutureListener());
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
