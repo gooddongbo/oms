@@ -36,6 +36,7 @@ public class TimeClientHandler extends ChannelHandlerAdapter {
         buf.readBytes(req);
         String body = new String(req,"UTF-8");
         System.out.println("Now is :" + body);
+        System.out.println(ctx.channel().getClass().getName());
     }
 
     /**
