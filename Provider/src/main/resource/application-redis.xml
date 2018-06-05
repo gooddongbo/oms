@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:cache="http://www.springframework.org/schema/cache"
+  xmlns:c="http://www.springframework.org/schema/c"
+  xmlns:context="http://www.springframework.org/schema/context"  
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+        >
+	 <!-- ****************************************  start  *******************************************-->
+	      <!-- ****************************************  end  ******************************************* -->
+	 <!--  使用jedis连接redis，可以自己包装redisTemplate   -->
+<!--      <bean id="jedisClient" class="com.juanpi.oms.redis.client.JedisClient" init-method="setAutoPassword"> -->
+<!--            <constructor-arg name="host" value="${redis.host}" /> -->
+<!--            <constructor-arg name="port" value="${redis.port}" /> -->
+<!--            <constructor-arg name="password" value="${redis.password}"/> -->
+<!--            <constructor-arg name="timeout" value="${redis.timeout}"/> -->
+<!--      </bean> -->
+
+     
+     <!-- ****************************************  start  *******************************************-->
+     <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">  
+		<!--最大空闲数，数据库连接的最大空闲时间。超过空闲时间，数据库连接将被标记为不可用，然后被释放。设为0表示无限制。 -->
+        <property name="maxIdle" value="50" />
+		<!--连接池的最大数据库连接数。设为0表示无限制     -->
+        <property name="maxTotal" value="100" />  
+		<!--最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。  -->
+        <property name="maxWaitMillis" value="10000" />  
+		<!--在borrow一个jedis实例时，是否提前进行alidate操作；如果为true，则得到的jedis实例均是可用的 -->
+<!--         <property name="testOnBorrow" value="true" />   -->
+        <property name="testOnReturn" value="true"/>
+    </bean>
+    <!-- 非切片连接(非集群) start-->
+<!--     <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"   -->
+<!--         p:host-name="10.33.2.201" p:port="6379" p:password="myRedis"  p:pool-config-ref="poolConfig"/>   -->
+      
+<!--     <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">   -->
+<!--         <property name="connectionFactory"   ref="connectionFactory" />   -->
+<!--     </bean>    -->
+	<!-- 非切片连接(非集群) end-->
+<!--     <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton"> -->
+<!--         <constructor-arg index="0" ref="poolConfig" /> -->
+<!--         <constructor-arg index="1"> -->
+<!--             <list> -->
+<!--                 <bean class="redis.clients.jedis.JedisShardInfo"> -->
+<!--                 redis://用户名:密码@host:port/库，其中用户名随意填写的 -->
+<!--                     <constructor-arg name="host" value="${redis.pool.master.host}" /> -->
+<!--                 </bean> -->
+<!--                 <bean class="redis.clients.jedis.JedisShardInfo"> -->
+<!--                  redis://用户名:密码@host:port/库，其中用户名随意填写的 --> 
+<!--                     <constructor-arg name="host" value="${redis.pool.slave.host}" /> -->
+<!--                 </bean> -->
+<!--             </list> -->
+<!--         </constructor-arg> -->
+<!--     </bean> -->
+     <!-- ****************************************  end  ******************************************* -->
+            <bean id="jedisSentinelPool" class="redis.clients.jedis.JedisSentinelPool">
+                 <constructor-arg index="0" value="mymaster" />
+                 <constructor-arg index="1">
+                     <set>
+                         <value>${redis.pool.sentinel.host}</value>
+                     </set>
+                 </constructor-arg>
+                 <constructor-arg index="2" ref="poolConfig" />
+                 <constructor-arg index="3" value="myRedis" />
+            </bean>
+</beans>

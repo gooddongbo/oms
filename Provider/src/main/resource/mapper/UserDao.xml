@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.juanpi.oms.dao.UserDao">  
+<!-- <select id="getUser" parameterType="com.springMyBatis.system.model.User" resultType="com.springMyBatis.system.model.User">   -->
+<!--     SELECT * FROM user WHERE username=#{username} AND password=#{password}   -->
+<!-- </select>   -->
+<resultMap id="userResult" type="com.hqyg.dubbo.Provider.dto.UserDto">
+  <id column="id" property="id" jdbcType="INTEGER" javaType="int"/>
+  <result column="username" property="username" jdbcType="VARCHAR" javaType="java.lang.String"/>
+  <result column="password" property="password" jdbcType="VARCHAR" javaType="java.lang.String"/>
+ </resultMap>
+<!-- 注意：resultType="com.juanpi.oms.dto.UserDto" -->
+<select id="findList" resultMap="userResult">
+	select id,
+		   username,
+		   password
+    from user
+</select>
+<insert id="addUser" parameterType="com.juanpi.oms.dto.UserDto">  
+   INSERT INTO user (username,password) VALUES (#{username},#{password})  
+</insert> 
+
+<select id="getUserById" parameterType="java.lang.String" resultMap="userResult">
+	select id,
+		   username,
+		   password
+    from user
+    where id = #{id}
+</select>
+
+<select id="getUserByUserName" parameterType="java.lang.String" resultMap="userResult">
+	select id,
+		   username,
+		   password
+    from user
+    where username = #{username}
+</select>
+ 
+<!-- <update id="updateUser" parameterType="com.springMyBatis.system.model.User">   -->
+<!--     UPDATE user SET password=#{password} WHERE id=#{id}   -->
+<!-- </update>   -->
+<!-- <delete id="deleteUser" parameterType="int">   -->
+<!--     DELETE FROM user WHERE id=#{id}   -->
+<!-- </delete>   -->
+</mapper>  
+
